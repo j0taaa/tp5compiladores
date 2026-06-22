@@ -198,15 +198,21 @@ case with no matching branch.  The generated code calls _dispatch_abort,
 _case_abort2, and _case_abort with the runtime's expected arguments.
 
 The GC selection globals are emitted by the provided support code.  Attribute
-stores call _GenGC_Assign when a collecting memory manager is selected, and
-temporary values that must survive calls are kept on the stack.
+stores call _GenGC_Assign with the modified slot address in $a1 when a
+collecting memory manager is selected, and temporary values that must survive
+calls are kept on the stack.
 
 example.cl tests inherited attributes, overriding, dynamic dispatch, static
-dispatch, SELF_TYPE, lets, loops, arithmetic, case, isvoid, not, String methods,
-and IO output.  Verification commands used:
+dispatch, SELF_TYPE, lets, default initialization, loops, arithmetic,
+comparisons, equality, case, isvoid, not, String methods, and IO output.
+Separate small programs were also used to verify the required runtime aborts
+for dispatch on void, case on void, and case with no matching branch.
+Verification commands used:
 
   make cgen
   ./mycoolc example.cl
   /var/tmp/cool/bin/spim -file example.s
   ./mycoolc -g example.cl
+  /var/tmp/cool/bin/spim -file example.s
+  ./mycoolc -g -t example.cl
   /var/tmp/cool/bin/spim -file example.s

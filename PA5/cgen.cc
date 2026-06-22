@@ -989,8 +989,12 @@ void CgenClassTable::code_initializers()
       if (attr_class *a = dynamic_cast<attr_class *>(nd->features->nth(k))) {
 	if (a->name != val && a->name != str_field && !dynamic_cast<no_expr_class *>(a->init)) {
 	  a->init->code(str);
-	  emit_store(ACC, nd->attr_offsets[a->name], SELF, str);
-	  if (cgen_Memmgr != GC_NOGC) emit_gc_assign(str);
+	  int offset = nd->attr_offsets[a->name];
+	  emit_store(ACC, offset, SELF, str);
+	  if (cgen_Memmgr != GC_NOGC) {
+	    emit_addiu(A1, SELF, offset * WORD_SIZE, str);
+	    emit_gc_assign(str);
+	  }
 	}
       }
     }
@@ -1176,8 +1180,12 @@ void assign_class::code(ostream &s) {
   if (cur_env->lookup(name, off)) {
     emit_store(ACC, off, FP, s);
   } else {
-    emit_store(ACC, cur_table->attr_offset(name), SELF, s);
-    if (cgen_Memmgr != GC_NOGC) emit_gc_assign(s);
+    off = cur_table->attr_offset(name);
+    emit_store(ACC, off, SELF, s);
+    if (cgen_Memmgr != GC_NOGC) {
+      emit_addiu(A1, SELF, off * WORD_SIZE, s);
+      emit_gc_assign(s);
+    }
   }
 }
 

@@ -42,6 +42,18 @@ class Main inherits IO {
       out_string("\n");
 
       if not isvoid a.me() then out_string("ok\n") else out_string("bad\n") fi;
+
+      if "ab".concat("c") = "abc" then out_string("eqstr\n") else out_string("bad\n") fi;
+      if 5 = 2 + 3 then out_string("eqint\n") else out_string("bad\n") fi;
+      if false = not true then out_string("eqbool\n") else out_string("bad\n") fi;
+
+      let d : Int, empty : String, obj : Object in {
+        out_int(d);
+        out_string("\n");
+        out_int(empty.length());
+        out_string("\n");
+        if isvoid obj then out_string("void\n") else out_string("bad\n") fi;
+      };
     };
   }};
 };
